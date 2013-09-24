@@ -21,8 +21,7 @@ class Line
 				if @x1 >= line.x1 && @x2 <= line.x2
 					@expand_up = false
 				end
-			end
-			if @expand_down && @y2 == line.y2
+			elsif @expand_down && @y2 == line.y2
 				if @x1 >= line.x1 && @x2 <= line.x2
 					@expand_down = false
 				end
@@ -32,8 +31,7 @@ class Line
 				if @y1 >= line.y1 && @y2 <= line.y2
 					@expand_left = false
 				end
-			end
-			if @expand_right && @x2 == line.x2
+			elsif @expand_right && @x2 == line.x2
 				if @y1 >= line.y1 && @y2 <= line.y2
 					@expand_right = false
 				end
@@ -41,7 +39,8 @@ class Line
 		end
 	end
 
-	def check_intersects_lines(lines)	# Returns true if line has intersected with another line, false otherwise
+	# Returns true if line has intersected with another line, false otherwise
+	def check_intersects_lines(lines)
 		lines.each do |line|
 			if line != self
 				check_intersects_line(line)
@@ -49,7 +48,8 @@ class Line
 		end
 	end
 
-	def update(lines_expanding, lines_expanded)	# Returns true if done expanding, false otherwise
+	# Returns true if done expanding, false otherwise
+	def update(lines_expanding, lines_expanded)	
 		for i in (0...speed) # Increment size by 1 in order to not extend outside of intersected lines
 			if is_vertical
 				@y1 -= @expand_up ? 1 : 0
