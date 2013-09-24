@@ -3,7 +3,7 @@ Divide0
 
 This game is being developed in Ruby using the Gosu gem.
 
-Currently, balls can be generated randomly using the "R" key.
+Currently, balls can be generated randomly using the "R" key and the game can be rest using the "Space" key.
 Lines can be generated horizontally or vertically using the left or right mouse buttons, respectively.
 As of right now, balls will collide with the boundaries of the window and themselves, but not drawn lines.
 
