@@ -3,13 +3,13 @@ require 'gosu'
 require 'set'
 require_relative 'ball'
 require_relative 'line'
-
+require_relative 'area'
 
 class Window < Gosu::Window
 
 	def initialize(width, height)
 		super(width, height, false)
-		self.caption = 'Divide0'
+		self.caption = "Divide0"
 		@font = Gosu::Font.new(self, Gosu::default_font_name, 16)
 		@bg_color = Gosu::Color.new(255, 0, 0, 50)	# (a, r, g, b)
 		@bg_gameover_color = Gosu::Color.new(255, 150, 0, 0)
@@ -20,6 +20,7 @@ class Window < Gosu::Window
 		@balls = Set.new
 		@lines_expanding = Set.new
 		@lines_expanded = Set.new
+		@area = Area.new(0, $win_width, 0, $win_height)
 	end
 	
 	def line_contains_point?(line, x, y)
@@ -75,6 +76,7 @@ class Window < Gosu::Window
 				# Expand line and add to set of expanded lines if line is fully expanded
 				if line.update(@lines_expanding, @lines_expanded)
 					@lines_expanded << line
+					@area.divide(line)
 				end
 				@lines_expanding -= @lines_expanded	# Removes expanded line from expanding set to prevent unneccesary updates
 			end
@@ -84,6 +86,8 @@ class Window < Gosu::Window
 	def draw
 		color = @is_gameover ? @bg_gameover_color : @bg_color
 		draw_quad(0, 0, color, $win_width, 0, color, 0, $win_height, color, $win_width, $win_height, color, 0)
+
+		@area.draw
 
 		# Draw balls
 		@balls.each do |ball|

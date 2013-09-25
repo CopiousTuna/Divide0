@@ -15,6 +15,15 @@ class Line
 		@@color ||= Gosu::Color.new(7, 157, 208)
 	end
 
+	# Returns the center point of the line as an array [x, y]
+	def get_center
+		if(is_vertical)
+			return [x1, (y2 + y1) / 2]	
+		else
+			return [(x2 + x1) / 2, y1]
+		end	
+	end
+
 	def check_intersects_line(line)
 		if is_vertical
 			if @expand_up && @y1 == line.y1
@@ -52,33 +61,21 @@ class Line
 	def update(lines_expanding, lines_expanded)	
 		for i in (0...speed) # Increment size by 1 in order to not extend outside of intersected lines
 			if is_vertical
-				@y1 -= @expand_up ? 1 : 0
-				@y2 += @expand_down ? 1 : 0
+				@y1 -= 1 if @expand_up
+				@y2 += 1 if @expand_down
 
-				if @y1 == 0
-					@expand_up = false
-				end
-				if @y2 == $win_height
-					@expand_down = false
-				end
-
-				if !@expand_up && !@expand_down
-					return true
-				end
+				@expand_up = false if @y1 == 0
+				@expand_down = false if @y2 == $win_height
+					
+				return true if !@expand_up && !@expand_down
 			else
-				@x1 -= @expand_left? 1 : 0
-				@x2 += @expand_right? 1 : 0
+				@x1 -= 1 if @expand_left
+				@x2 += 1 if @expand_right
 
-				if @x1 == 0
-					@expand_left = false
-				end
-				if @x2 == $win_width
-					@expand_right = false
-				end
+				@expand_left = false if @x1 == 0
+				@expand_right = false if @x2 == $win_width
 
-				if !@expand_left && !@expand_right
-					return true
-				end
+				return true if !@expand_left && !@expand_right
 			end
 			# Check to see if expansion caused intersection with other lines
 			check_intersects_lines(lines_expanding)
@@ -88,6 +85,6 @@ class Line
 	end
 
 	def draw
-		$window.draw_line(@x1, @y1, @@color, @x2, @y2, @@color)
+		$window.draw_line(@x1, @y1, @@color, @x2, @y2, @@color, 1)
 	end
 end
