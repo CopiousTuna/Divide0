@@ -9,8 +9,10 @@ class Area
 		@y1 = y1
 		@y2 = y2
 		@children = Set.new
+		@balls_contained = 0
 				
-		@@color ||= Gosu::Color.new(20, 0, 100, 0)
+		@@color_multiple ||= Gosu::Color.new(255, 100, 0, 0)
+		@@color_single ||= Gosu::Color.new(255, 0, 100, 0)
 	end
 	
 	# If area has children, recursively travel down children to find correct area to split
@@ -28,7 +30,17 @@ class Area
 	# Return true if the area contains the given line
 	def contains_line(line)
 		point = line.get_center
-		return point[0] >= @x1 && point[0] <= @x2 && point[1] >= @y1 && point[1] <= @y2
+		return point[0] > @x1 && point[0] < @x2 && point[1] > @y1 && point[1] < @y2
+	end
+	
+	def find_balls_contained(balls)
+		num_balls = 0
+		if @children.empty?
+			balls.each do |ball|
+				num_balls += 1 if ball.x > @x1 && ball.x < @x2 && ball.y > @y1  && ball.y < @y2
+			end
+		end
+		return num_balls
 	end
 	
 	# Split the area in two based on the position of the expanded line
@@ -42,9 +54,16 @@ class Area
 		end
 	end
 	
+	def update(balls)
+		@balls_contained = find_balls_contained(balls)
+		@children.each do |child|
+			child.update(balls)
+		end
+	end
+	
 	def draw
-		$window.draw_quad(@x1, @y1, @@color, @x2, @y1, @@color, 
-			@x1, @y2, @@color, @x2, @y2, @@color, 0)
+		color = @balls_contained > 1 ? @@color_multiple : @@color_single
+		$window.draw_quad(@x1, @y1, color, @x2, @y1, color, @x1, @y2, color, @x2, @y2, color, 0)
 			
 		@children.each do |child|
 			child.draw

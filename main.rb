@@ -48,13 +48,14 @@ class Window < Gosu::Window
 		dY = @random.rand(3..6)
 		dY *= dY % 2 == 0 ? 1 : -1
 		
-		return Ball.new(@random.rand(0..$win_width), @random.rand(0..$win_height), dX, dY)
+		return Ball.new(@random.rand(0..$win_width), @random.rand(0..$win_height), 3, 3)
 	end
 
 	def reset_game
 		@balls.clear
 		@lines_expanding.clear
 		@lines_expanded.clear
+		@area = Area.new(0, $win_width, 0, $win_height)
 		@is_gameover = false
 	end
 
@@ -80,12 +81,14 @@ class Window < Gosu::Window
 				end
 				@lines_expanding -= @lines_expanded	# Removes expanded line from expanding set to prevent unneccesary updates
 			end
+			
+			@area.update(@balls)
 		end
 	end
 	
 	def draw
-		color = @is_gameover ? @bg_gameover_color : @bg_color
-		draw_quad(0, 0, color, $win_width, 0, color, 0, $win_height, color, $win_width, $win_height, color, 0)
+		#color = @is_gameover ? @bg_gameover_color : @bg_color
+		#draw_quad(0, 0, color, $win_width, 0, color, 0, $win_height, color, $win_width, $win_height, color, 0)
 
 		@area.draw
 
