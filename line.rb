@@ -26,22 +26,26 @@ class Line
 
 	def check_intersects_line(line)
 		if is_vertical
-			if @expand_up && @y1 == line.y1
+			if @expand_up && (@y1 - line.y1).abs < @speed
 				if @x1 >= line.x1 && @x2 <= line.x2
+					@y1 = line.y2
 					@expand_up = false
 				end
-			elsif @expand_down && @y2 == line.y2
+			elsif @expand_down && (@y2 - line.y2).abs < @speed
 				if @x1 >= line.x1 && @x2 <= line.x2
+					@y2 = line.y1
 					@expand_down = false
 				end
 			end
 		else
-			if @expand_left && @x1 == line.x1
+			if @expand_left && (@x1 - line.x1).abs < @speed
 				if @y1 >= line.y1 && @y2 <= line.y2
+					@x1 = line.x2
 					@expand_left = false
 				end
-			elsif @expand_right && @x2 == line.x2
+			elsif @expand_right && (@x2 - line.x2).abs < @speed
 				if @y1 >= line.y1 && @y2 <= line.y2
+					@x2 = line.x1
 					@expand_right = false
 				end
 			end
@@ -58,27 +62,26 @@ class Line
 	end
 
 	# Returns true if done expanding, false otherwise
-	def update(lines_expanding, lines_expanded)	
+	def update(lines_expanded)
 		for i in (0...speed) # Increment size by 1 in order to not extend outside of intersected lines
 			if is_vertical
-				@y1 -= 1 if @expand_up
-				@y2 += 1 if @expand_down
+				@y1 -= @speed if @expand_up
+				@y2 += @speed if @expand_down
 
-				@expand_up = false if @y1 == 0
-				@expand_down = false if @y2 == $win_height
-					
+				@expand_up = false if @y1 <= 0
+				@expand_down = false if @y2 >= $win_height
+				
 				return true if !@expand_up && !@expand_down
 			else
-				@x1 -= 1 if @expand_left
-				@x2 += 1 if @expand_right
+				@x1 -= @speed if @expand_left
+				@x2 += @speed if @expand_right
 
-				@expand_left = false if @x1 == 0
-				@expand_right = false if @x2 == $win_width
+				@expand_left = false if @x1 <= 0
+				@expand_right = false if @x2 >= $win_width
 
 				return true if !@expand_left && !@expand_right
 			end
 			# Check to see if expansion caused intersection with other lines
-			check_intersects_lines(lines_expanding)
 			check_intersects_lines(lines_expanded)
 		end
 		return false
