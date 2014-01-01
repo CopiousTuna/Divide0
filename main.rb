@@ -20,6 +20,8 @@ class Window < Gosu::Window
 		@balls = Set.new
 		@line_expanding = nil
 		@lines_expanded = Set.new
+		@total_area = $win_width * $win_height
+		@filled_percent = 0
 		@area = Area.new(0, $win_width, 0, $win_height)
 	end
 	
@@ -85,6 +87,7 @@ class Window < Gosu::Window
 			end
 			
 			@area.update(@balls)
+			@filled_percent = ((@area.get_size.to_f / @total_area.to_f) * 100).to_i
 		end
 	end
 	
@@ -110,6 +113,7 @@ class Window < Gosu::Window
 		
 		# Frame rate
 		@font.draw(Gosu::fps(), 5, 5, 2, 1.0, 1.0, 0xffffffff)
+		@font.draw(@filled_percent.to_s + "%", $win_width - 40, 5, 2, 1.0, 1.0, 0xffffffff)
 	end
 	
 	# Handles keyboard input

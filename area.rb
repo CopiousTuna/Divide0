@@ -35,11 +35,9 @@ class Area
 	
 	def find_balls_contained(balls)
 		num_balls = 0
-		if @children.empty?
 			balls.each do |ball|
 				num_balls += 1 if ball.x > @x1 && ball.x < @x2 && ball.y > @y1  && ball.y < @y2
 			end
-		end
 		return num_balls
 	end
 	
@@ -54,6 +52,24 @@ class Area
 		end
 	end
 	
+	def get_size
+		if @balls_contained == 0
+			return (@x2 - @x1) * (@y2 - @y1)
+		elsif !@children.empty?
+			return get_sizes(@children)
+		else
+			return 0
+		end
+	end
+	
+	def get_sizes(areas)
+		total_size = 0
+		areas.each do |area|
+			total_size += area.get_size
+		end
+		return total_size
+	end
+	
 	def update(balls)
 		@balls_contained = find_balls_contained(balls)
 		@children.each do |child|
@@ -62,9 +78,9 @@ class Area
 	end
 	
 	def draw
-		color = @balls_contained > 1 ? @@color_multiple : @@color_single
+		color = @balls_contained > 0 ? @@color_multiple : @@color_single
 		$window.draw_quad(@x1, @y1, color, @x2, @y1, color, @x1, @y2, color, @x2, @y2, color, 0)
-			
+		
 		@children.each do |child|
 			child.draw
 		end
